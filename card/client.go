@@ -12,10 +12,10 @@ type Client struct {
 }
 
 func New(params *go_bambora.CardParams) (*go_bambora.Card, error) {
-	return getClient().New(params)
+	return getClient().Tokenize(params)
 }
 
-func (c Client) New(params *go_bambora.CardParams) (*go_bambora.Card, error) {
+func (c Client) Tokenize(params *go_bambora.CardParams) (*go_bambora.Card, error) {
 	APIResource := go_bambora.APIResource{LastResponse: &go_bambora.ApiResponse{Status: "demo"}}
 	p := &go_bambora.Card{
 		APIResource,
@@ -25,5 +25,5 @@ func (c Client) New(params *go_bambora.CardParams) (*go_bambora.Card, error) {
 }
 
 func getClient() *Client {
-	return &Client{go_bambora.GetEndpoint(config.APIEndpoint), go_bambora.GeneratePasscode()}
+	return &Client{go_bambora.GetEndpoint(config.APIEndpoint), go_bambora.AccountPasscode}
 }

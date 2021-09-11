@@ -1,7 +1,9 @@
-package go_bambora
+package bambora
 
 import (
 	"crypto/tls"
+	"encoding/base64"
+	"errors"
 	"github.com/marvinhosea/bambora-go/config"
 	"github.com/marvinhosea/bambora-go/util"
 	"log"
@@ -20,6 +22,15 @@ type Endpoints struct {
 }
 
 var endpoints Endpoints
+
+// MerchantId Merchant Id which is used globally
+var MerchantId string
+
+//AccountPasscode which is used Globally
+var AccountPasscode string
+
+// Passcode is Bambora global request passcode used to query
+var Passcode string
 
 var httpClient = &http.Client{
 	Timeout: 80*time.Second,
@@ -104,8 +115,28 @@ func GetEndpointWithConfig(ep string, cnf *config.Config) Endpoint {
 }
 
 func GeneratePasscode() string {
-	//generate passcode from config
-	return "djkdajfnkjndsf"
+	config := config.New(MerchantId, AccountPasscode)
+	pc, err := generatePasscode(config)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return pc
+}
+
+func generatePasscode(config *config.Config) (string, error) {
+	if len(config.MerchantId) == 0 {
+		return "", errors.New("error: merchant id is empty")
+	}
+
+	if len(config.Passcode) == 0 {
+		return "", errors.New("error: passcode is empty")
+	}
+
+	passcode := base64.StdEncoding.EncodeToString([]byte(config.MerchantId + ":" + config.Passcode))
+	if len(passcode) == 0 {
+		return "", errors.New("error: generated passcode is empty")
+	}
+	return passcode, nil
 }
 
 func newEndpointImplementation(endpointType string, config *config.Config) Endpoint {

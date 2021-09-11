@@ -1,4 +1,4 @@
-package go_bambora
+package bambora
 
 type Card struct {
 	APIResource
