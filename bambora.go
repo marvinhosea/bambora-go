@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"encoding/base64"
 	"errors"
+	"github.com/marvinhosea/bambora-go/client"
 	"github.com/marvinhosea/bambora-go/config"
 	"github.com/marvinhosea/bambora-go/util"
 	"log"
@@ -55,6 +56,7 @@ type EndpointImplementation struct {
 	HTTPClient *http.Client
 	Type string
 	Url string
+	restClient client.RestClient
 }
 
 func newApiResponse(res *http.Response, body []byte) *ApiResponse {
@@ -69,8 +71,29 @@ func (a *APIResource) SetLastResponse(response *ApiResponse)  {
 }
 
 func (i *EndpointImplementation) Call(method, path, passcode string, params map[string]string, v LastResponseSetter) error {
-	log.Printf("working")
+
 	return nil
+}
+
+func (i *EndpointImplementation) NewRequest(method, path, passcode string, params map[string]string, v LastResponseSetter) error {
+	url := i.Url + path
+	var req *http.Request
+	var err error
+	if method == http.MethodPost {
+		req, err = i.restClient.Post(url, passcode, params, nil)
+		if err != nil {
+			return err
+		}
+	}
+
+	if method == http.MethodGet {
+		req, err = i.restClient.Post(url, passcode, params, nil)
+		if err != nil {
+			return err
+		}
+	}
+
+	
 }
 
 func GetEndpoint(endpointType string) Endpoint {
@@ -143,5 +166,7 @@ func newEndpointImplementation(endpointType string, config *config.Config) Endpo
 	return &EndpointImplementation{
 		HTTPClient: config.HttpClient,
 		Url: *config.Url,
+		Type: endpointType,
+		restClient: client.RestClient{},
 	}
 }

@@ -11,14 +11,14 @@ type Client struct {
 	Passcode string
 }
 
-func New(params *go_bambora.CardParams) (*go_bambora.Card, error) {
-	return getClient().Tokenize(params)
+func Tokenize(params *go_bambora.CardParams) (*go_bambora.Card, error) {
+	return getClient().New(params)
 }
 
-func (c Client) Tokenize(params *go_bambora.CardParams) (*go_bambora.Card, error) {
+func (c Client) New(params *go_bambora.CardParams) (*go_bambora.Card, error) {
 	APIResource := go_bambora.APIResource{LastResponse: &go_bambora.ApiResponse{Status: "demo"}}
 	p := &go_bambora.Card{
-		APIResource,
+		APIResource: APIResource,
 	}
 	err := c.E.Call(http.MethodPost, "/dmeo", c.Passcode, nil, p)
 	return p, err

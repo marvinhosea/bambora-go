@@ -4,7 +4,6 @@ type Card struct {
 	APIResource
 }
 
-
 type CardParams struct {
 	Number *string `form:"number"`
 	ExpiryMonth *string `form:"expiry_month"`
