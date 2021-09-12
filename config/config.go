@@ -1,10 +1,13 @@
 package config
 
-import "net/http"
+import (
+	"github.com/marvinhosea/bambora-go/util"
+	"net/http"
+)
 
 const (
 	APIUrl string = "https://"
-	OauthUrl string = "https://"
+	OauthUrl string = "https://api.na.bambora.com/scripts"
 	APIEndpoint string = "api"
 	// Connect For Oauth backend
 	Connect string = "connect"
@@ -26,6 +29,7 @@ func New(merchantId, passcode string) *Config {
 		config = &Config{
 			MerchantId: merchantId,
 			Passcode: passcode,
+			Url: util.String(OauthUrl),
 			ApiVersion: ApiVersion,
 		}
 	}

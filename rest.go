@@ -1,4 +1,4 @@
-package client
+package bambora
 
 import (
 	"bytes"
@@ -41,7 +41,9 @@ func (r *RestClient) Post(path, passcode string, body interface{}, headers http.
 		return nil, err
 	}
 
-	req.Header = headers
+	if headers != nil {
+		req.Header = headers
+	}
 	req.Header.Add("Content-Type", `application/json;charset=utf-8`)
 	req.Header.Add("Authorization", "Passcode " + passcode)
 	return req, nil

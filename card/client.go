@@ -1,29 +1,31 @@
 package card
 
 import (
-	go_bambora "github.com/marvinhosea/bambora-go"
+	gobambora "github.com/marvinhosea/bambora-go"
 	"github.com/marvinhosea/bambora-go/config"
 	"net/http"
 )
 
 type Client struct {
-	E go_bambora.Endpoint
+	E        gobambora.Endpoint
 	Passcode string
 }
 
-func Tokenize(params *go_bambora.CardParams) (*go_bambora.Card, error) {
+func Tokenize(params *gobambora.CardParams) (*gobambora.Card, error) {
 	return getClient().New(params)
 }
 
-func (c Client) New(params *go_bambora.CardParams) (*go_bambora.Card, error) {
-	APIResource := go_bambora.APIResource{LastResponse: &go_bambora.ApiResponse{Status: "demo"}}
-	p := &go_bambora.Card{
-		APIResource: APIResource,
-	}
-	err := c.E.Call(http.MethodPost, "/dmeo", c.Passcode, nil, p)
+func (c Client) New(params *gobambora.CardParams) (*gobambora.Card, error) {
+	p := &gobambora.Card{}
+	err := c.E.Call(http.MethodPost, "/tokenization", c.Passcode, map[string]string{
+		"number": *params.Number,
+		"expiry_month": *params.ExpiryMonth,
+		"expiry_year": *params.ExpiryYear,
+		"cvd": *params.CVD,
+	}, p)
 	return p, err
 }
 
 func getClient() *Client {
-	return &Client{go_bambora.GetEndpoint(config.APIEndpoint), go_bambora.AccountPasscode}
+	return &Client{gobambora.GetEndpoint(config.Connect), gobambora.AccountPasscode}
 }

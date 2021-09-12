@@ -3,10 +3,12 @@ package bambora
 import (
 	"crypto/tls"
 	"encoding/base64"
+	"encoding/json"
 	"errors"
-	"github.com/marvinhosea/bambora-go/client"
+	//"github.com/marvinhosea/bambora-go/client"
 	"github.com/marvinhosea/bambora-go/config"
 	"github.com/marvinhosea/bambora-go/util"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"sync"
@@ -41,7 +43,7 @@ type ApiResponse struct {
 	Headers http.Header
 	RawJson []byte
 	Status string
-	StatusCode string
+	StatusCode int
 }
 
 type LastResponseSetter interface {
@@ -56,23 +58,24 @@ type EndpointImplementation struct {
 	HTTPClient *http.Client
 	Type string
 	Url string
-	restClient client.RestClient
+	restClient RestClient
 }
 
 func newApiResponse(res *http.Response, body []byte) *ApiResponse {
 	return &ApiResponse{
 		Headers: res.Header,
 		RawJson: body,
+		Status: res.Status,
+		StatusCode: res.StatusCode,
 	}
 }
 
 func (a *APIResource) SetLastResponse(response *ApiResponse)  {
-
+	a.LastResponse = response
 }
 
 func (i *EndpointImplementation) Call(method, path, passcode string, params map[string]string, v LastResponseSetter) error {
-
-	return nil
+	return i.NewRequest(method, path, passcode, params, v)
 }
 
 func (i *EndpointImplementation) NewRequest(method, path, passcode string, params map[string]string, v LastResponseSetter) error {
@@ -92,8 +95,25 @@ func (i *EndpointImplementation) NewRequest(method, path, passcode string, param
 			return err
 		}
 	}
+	var result []byte
+	res, err := i.HTTPClient.Do(req)
+	if err == nil {
+		result, err = ioutil.ReadAll(res.Body)
+		log.Println("result", string(result))
+		res.Body.Close()
+	}
+	if err != nil {
+		return err
+	}
 
-	
+	err = json.Unmarshal(result, v)
+	if err != nil {
+		log.Println("Could not unmarshal response and something happened", err)
+		return err
+	}
+	v.SetLastResponse(newApiResponse(res, result))
+
+	return nil
 }
 
 func GetEndpoint(endpointType string) Endpoint {
@@ -110,7 +130,7 @@ func GetEndpoint(endpointType string) Endpoint {
 		HttpClient: httpClient,
 		Url: nil,
 	})
-	log.Println("end", ep)
+	log.Println("endpoint", ep)
 	if ep != nil {
 		return ep
 	}
@@ -167,6 +187,6 @@ func newEndpointImplementation(endpointType string, config *config.Config) Endpo
 		HTTPClient: config.HttpClient,
 		Url: *config.Url,
 		Type: endpointType,
-		restClient: client.RestClient{},
+		restClient: RestClient{},
 	}
 }

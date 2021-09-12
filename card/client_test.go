@@ -1,7 +1,8 @@
 package card
 
 import (
-	bambora "github.com/marvinhosea/bambora-go"
+	"github.com/marvinhosea/bambora-go"
+	"log"
 	"testing"
 
 	"github.com/marvinhosea/bambora-go/util"
@@ -21,6 +22,7 @@ func TestCardNew(t *testing.T) {
 		ExpiryYear: util.String("20"),
 		CVD: util.String("123"),
 	})
+	log.Println(card)
 
 	assert.Nil(t, err)
 	assert.NotNil(t, card)

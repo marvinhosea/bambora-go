@@ -13,6 +13,5 @@ type Api struct {
 }
 
 func (a Api) Init()  {
-	
 }
 
