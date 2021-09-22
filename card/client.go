@@ -12,12 +12,12 @@ type Client struct {
 }
 
 func Tokenize(params *gobambora.CardParams) (*gobambora.Card, error) {
-	return getClient().New(params)
+	return getClient().Tokenize(params)
 }
 
-func (c Client) New(params *gobambora.CardParams) (*gobambora.Card, error) {
+func (c Client) Tokenize(params *gobambora.CardParams) (*gobambora.Card, error) {
 	p := &gobambora.Card{}
-	err := c.E.Call(http.MethodPost, "/tokenization", c.Passcode, map[string]string{
+	err := c.E.Call(http.MethodPost, "/tokenization", c.Passcode, map[string]interface{}{
 		"number": *params.Number,
 		"expiry_month": *params.ExpiryMonth,
 		"expiry_year": *params.ExpiryYear,
@@ -27,5 +27,5 @@ func (c Client) New(params *gobambora.CardParams) (*gobambora.Card, error) {
 }
 
 func getClient() *Client {
-	return &Client{gobambora.GetEndpoint(config.Connect), gobambora.AccountPasscode}
+	return &Client{gobambora.GetEndpoint(config.Connect), gobambora.EncodedProfilePasscode}
 }

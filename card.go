@@ -9,8 +9,8 @@ type Card struct {
 }
 
 type CardParams struct {
-	Number *string `form:"number"`
-	ExpiryMonth *string `form:"expiry_month"`
-	ExpiryYear *string `form:"expiry_year"`
-	CVD *string `form:"cvd"`
+	Number *string
+	ExpiryMonth *string
+	ExpiryYear *string
+	CVD *string
 }

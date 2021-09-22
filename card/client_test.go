@@ -2,7 +2,6 @@ package card
 
 import (
 	"github.com/marvinhosea/bambora-go"
-	"log"
 	"testing"
 
 	"github.com/marvinhosea/bambora-go/util"
@@ -11,19 +10,22 @@ import (
 
 
 func TestCardNew(t *testing.T) {
+	merchantId := "383610147"
+	profilePasscode := "CE4801A6-EB07-4E0D-8589-4CF612A1"
+	paymentPasscode := "e58e7305b052490dA8EB693b4d9aF209"
 
-	bambora.MerchantId = "383610147"
-	bambora.AccountPasscode = "78BCE183B92E49EAA3C4F97CEDDE8539"
-	bambora.Passcode = bambora.GeneratePasscode()
+	_ = bambora.GeneratePasscodes(
+		merchantId,
+		profilePasscode,
+		paymentPasscode)
 
-	card, err := Tokenize(&bambora.CardParams{
+	token, err := Tokenize(&bambora.CardParams{
 		Number: util.String("4030000010001234"),
 		ExpiryMonth: util.String("02"),
 		ExpiryYear: util.String("20"),
 		CVD: util.String("123"),
 	})
-	log.Println(card)
 
 	assert.Nil(t, err)
-	assert.NotNil(t, card)
+	assert.NotNil(t, token)
 }

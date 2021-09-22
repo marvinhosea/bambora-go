@@ -3,6 +3,7 @@ package bambora
 import (
 	"bytes"
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -10,7 +11,7 @@ type RestClient struct {
 
 }
 
-func (r *RestClient) Get(path, passcode string, params map[string]string, headers http.Header) (*http.Request, error) {
+func (r *RestClient) Get(path, passcode string, params map[string]interface{}, headers http.Header) (*http.Request, error) {
 	req, err := http.NewRequest(http.MethodGet, path, nil)
 	if err != nil {
 		return nil, err
@@ -18,7 +19,7 @@ func (r *RestClient) Get(path, passcode string, params map[string]string, header
 
 	q := req.URL.Query()
 	for k, v := range params {
-		q.Add(k, v)
+		q.Add(k, v.(string))
 	}
 	req.URL.RawQuery = q.Encode()
 	req.Header = headers
@@ -35,6 +36,8 @@ func (r *RestClient) Post(path, passcode string, body interface{}, headers http.
 	if err != nil {
 		return nil, err
 	}
+
+	log.Println("bddfy", body)
 
 	req, err := http.NewRequest(http.MethodPost, path, bytes.NewReader(jsonBytes))
 	if err != nil {
