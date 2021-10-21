@@ -18,7 +18,7 @@ func TakePayment(params *bambora.PaymentParams) (*bambora.Payment, error) {
 func (c *Client) TakePayment(params *bambora.PaymentParams) (*bambora.Payment, error) {
 	payment := &bambora.Payment{}
 	pma := map[string]interface{}{
-		"amount": 100,
+		"amount": params.Amount,
 		"payment_method": params.PaymentMethod,
 		"payment_profile": map[string]interface{}{
 			"customer_code": params.Profile.CustomerCode,

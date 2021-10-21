@@ -13,9 +13,9 @@ import (
 
 func TestTakePayment(t *testing.T) {
 	t.Run("take payment", func(t *testing.T) {
-		merchantId := "383610147"
-		profilePasscode := "e58e7305b052490dA8EB693b4d9aF209"
-		paymentPasscode := "91E6726a7aA5499AA5AFa85C668093CD"
+		merchantId := ""
+		profilePasscode := ""
+		paymentPasscode := ""
 
 		cnf := bambora.GeneratePasscodes(
 			merchantId,
@@ -26,21 +26,21 @@ func TestTakePayment(t *testing.T) {
 		bambora.EncodedProfilePasscode = cnf.EProfilePasscode
 
 		card, err := card2.Tokenize(&bambora.CardParams{
-			Number: util.String("4030000010001234"),
+			Number: util.String("4445671030876125"),
 			ExpiryMonth: util.String("02"),
-			ExpiryYear: util.String("20"),
-			CVD: util.String("123"),
+			ExpiryYear: util.String("26"),
+			CVD: util.String("577"),
 		})
 
 		profile, err := profile2.New(&bambora.ProfileParams{
-			CardName: util.String("John Doe"),
+			CardName: util.String("Collins M O Hosea"),
 			CardToken: util.String(card.Token),
 		})
 
 		log.Println(profile, "profile")
 
 		payment, err := TakePayment(&bambora.PaymentParams{
-			Amount: 100,
+			Amount: 1,
 			PaymentMethod: config.ProfilePaymentMethod,
 			Profile: bambora.PaymentProfile{
 				CustomerCode: profile.CustomerCode,

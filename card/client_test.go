@@ -10,9 +10,9 @@ import (
 
 
 func TestCardNew(t *testing.T) {
-	merchantId := "383610147"
-	profilePasscode := "CE4801A6-EB07-4E0D-8589-4CF612A1"
-	paymentPasscode := "e58e7305b052490dA8EB693b4d9aF209"
+	merchantId := ""
+	profilePasscode := ""
+	paymentPasscode := ""
 
 	_ = bambora.GeneratePasscodes(
 		merchantId,

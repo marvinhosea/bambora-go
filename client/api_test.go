@@ -2,15 +2,17 @@ package client
 
 import (
 	"github.com/marvinhosea/bambora-go"
+	"github.com/marvinhosea/bambora-go/config"
 	"github.com/marvinhosea/bambora-go/util"
 	"github.com/stretchr/testify/assert"
+	"log"
 	"testing"
 )
 
 func TestApiInit(t *testing.T) {
-	merchantId := "383610147"
-	profilePasscode := "CE4801A6-EB07-4E0D-8589-4CF612A1"
-	paymentPasscode := "e58e7305b052490dA8EB693b4d9aF209"
+	merchantId := ""
+	profilePasscode := ""
+	paymentPasscode := ""
 
 	bc := &Api{}
 	bc.Init(merchantId, profilePasscode, paymentPasscode)
@@ -26,9 +28,25 @@ func TestApiInit(t *testing.T) {
 
 	t.Run("get card token", func(t *testing.T) {
 		card, err := bc.Card.Tokenize(card)
-
+		if err != nil {
+			log.Fatalln(err)
+		}
+		profile.CardToken = &card.Token
+		prf, err := bc.Profile.New(profile)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		payment, err := bc.Payment.TakePayment(&bambora.PaymentParams{
+			Amount: 100,
+			PaymentMethod: config.ProfilePaymentMethod,
+			Profile: bambora.PaymentProfile{
+				CustomerCode: prf.CustomerCode,
+				CardId: "1",
+				Complete: true,
+			},
+		})
 		assert.Nil(t, err)
-		assert.NotNil(t, card)
+		assert.NotNil(t, payment)
 	})
 
 	t.Run("get card profile", func(t *testing.T) {
